@@ -1,37 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CodeAutopsy — Understand the code you copied</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeAutopsy — Understand copied code</title>
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-<header>
-  <span class="logo">🔬</span>
-  <div>
-    <h1>CodeAutopsy</h1>
-    <div class="tag">Don't just copy code — understand it. Paste code, get the autopsy.</div>
-  </div>
-  <span class="badge">AI-powered · student edition</span>
-</header>
-<div class="pulse-strip" aria-hidden="true">
-  <svg viewBox="0 0 600 40" preserveAspectRatio="none">
-    <polyline points="0,20 90,20 105,20 115,4 125,36 135,20 150,20 250,20 265,20 275,4 285,36 295,20 310,20 410,20 425,20 435,4 445,36 455,20 470,20 570,20 585,20 595,4 600,20" />
-  </svg>
-</div>
-
-<main>
-  <!-- LEFT: INPUT SECTION -->
-  <section class="card">
-    <h2>🩺 Patient intake</h2>
-    
-    <div class="row">
+  <header>
+    <div class="brand">
+      <span class="logo">🔬</span>
       <div>
-        <label>Language</label>
+        <h1>CodeAutopsy</h1>
+        <p>Understand copied code with AI-powered autopsy reports</p>
+      </div>
+    </div>
+    <span class="badge">Student-focused</span>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Paste your code</h2>
+      <div class="field-row">
+        <label for="lang">Language</label>
         <select id="lang">
           <option>Auto-detect</option>
           <option>Python</option>
@@ -43,67 +34,47 @@
           <option>SQL</option>
         </select>
       </div>
-      <div>
-        <label>&nbsp;</label>
-        <button class="btn-ghost" style="width:100%" onclick="loadSample()">Load sample buggy code</button>
+      <textarea id="codeInput" placeholder="Paste your code here..."></textarea>
+      <details>
+        <summary>AI settings</summary>
+        <label for="provider">Provider</label>
+        <select id="provider">
+          <option value="gemini">Google Gemini</option>
+          <option value="openai">OpenAI</option>
+          <option value="openrouter">OpenRouter</option>
+          <option value="grok">Groq</option>
+        </select>
+        <label for="model">Model</label>
+        <input id="model" type="text" value="gemini-2.5-flash" />
+        <label for="apiKey" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>API key</span>
+          <a id="apiHelpLink" href="https://aistudio.google.com/app/apikey" target="_blank" style="font-size: 0.8rem; color: #38bdf8; text-decoration: none;">Get Gemini key</a>
+        </label>
+        <input id="apiKey" type="password" placeholder="Paste API key here" />
+      </details>
+      <div class="field-row">
+        <label><input id="demoMode" type="checkbox" /> Demo mode</label>
       </div>
-    </div>
+      <button class="btn-primary" id="runBtn">🔬 Run Autopsy</button>
+      <div id="errBox" class="err hidden"></div>
+    </section>
 
-    <label>Paste your code</label>
-    <textarea id="codeInput" spellcheck="false" placeholder="// Paste the code you copied but don't fully understand..."></textarea>
+    <section class="card">
+      <h2>Autopsy report</h2>
+      <div class="tabs" id="tabs">
+        <button data-t="overview" class="active">Overview</button>
+        <button data-t="lines">Line-by-line</button>
+        <button data-t="bugs">Bugs</button>
+        <button data-t="quiz">Quiz</button>
+      </div>
+      <div id="tab-overview"><div class="placeholder">No report yet.</div></div>
+      <div id="tab-lines" class="hidden"></div>
+      <div id="tab-bugs" class="hidden"></div>
+      <div id="tab-quiz" class="hidden"></div>
+    </section>
+  </main>
 
-    <details>
-      <summary>⚙️ AI settings (bring your own key)</summary>
-      <label>Provider</label>
-      <select id="provider">
-        <option value="gemini">Google Gemini (free key: aistudio.google.com, free model: gemini-2.5-flash)</option>
-        <option value="openai">OpenAI (platform.openai.com, model: gpt-4o-mini)</option>
-        <option value="openrouter">OpenRouter (openrouter.ai/keys, free model: llama-3.3-70b-instruct:free)</option>
-        <option value="grok">Groq (console.groq.com/keys, free model: llama-3.3-70b-versatile)</option>
-      </select>
-      <label>Model</label>
-      <input type="text" id="model" value="gemini-2.5-flash">
-      <label>API key (stored only in your browser)</label>
-      <input type="password" id="apiKey" placeholder="Gemini: aistudio.google.com · OpenRouter: openrouter.ai/keys · Groq: console.groq.com/keys · OpenAI: platform.openai.com">
-    </details>
-
-    <details>
-      <summary>🧪 AI instructions (written &amp; editable by me)</summary>
-      <label>System prompt sent to the model</label>
-      <textarea id="sysPrompt" spellcheck="false"></textarea>
-    </details>
-
-    <div class="toggle">
-      <input type="checkbox" id="demoMode">
-      <label for="demoMode" style="margin:0;cursor:pointer">Demo mode (no API key needed — uses a built-in sample analysis)</label>
-    </div>
-
-    <button class="btn-primary" id="runBtn" onclick="runAutopsy()">🔬 Run Autopsy</button>
-    <div id="errBox" class="err hidden"></div>
-  </section>
-
-  <!-- RIGHT: RESULTS SECTION -->
-  <section class="card">
-    <h2>📋 Autopsy report</h2>
-    
-    <div class="tabs" id="tabs">
-      <button data-t="overview" class="active" onclick="showTab('overview')">Overview</button>
-      <button data-t="lines" onclick="showTab('lines')">Line-by-line</button>
-      <button data-t="bugs" onclick="showTab('bugs')">Bugs &amp; WHY</button>
-      <button data-t="quiz" onclick="showTab('quiz')">Quiz me</button>
-    </div>
-
-    <div id="tab-overview">
-      <div class="placeholder">No autopsy yet.<br><br>Paste code on the left and hit <b>Run Autopsy</b> — or tick <b>Demo mode</b> and load the sample to see how it works.</div>
-    </div>
-    <div id="tab-lines" class="hidden"></div>
-    <div id="tab-bugs" class="hidden"></div>
-    <div id="tab-quiz" class="hidden"></div>
-  </section>
-</main>
-
-<footer>CodeAutopsy — final project build · your key never leaves your browser</footer>
-
-<script src="js/app.js"></script>
+  <footer>CodeAutopsy — your key stays in the browser</footer>
+  <script src="js/app.js"></script>
 </body>
 </html>
