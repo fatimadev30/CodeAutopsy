@@ -84,24 +84,6 @@ Rules:
   * OpenRouter (`meta-llama/llama-3.3-70b-instruct:free`)
 * **Storage:** Browser `localStorage` API for persisting user settings.
 
----
-
-## 📸 Screenshots
-*(Note: Replace these placeholder images with actual screenshots of your app before submitting!)*
-
-### 1. The Input & Configuration Screen
-![Input Screen](https://placehold.co/800x450/090d17/38bdf8?text=Screenshot+1:+Paste+Code+&+AI+Settings)
-*Users paste their code and configure their preferred AI provider.*
-
-### 2. Line-by-Line Breakdown
-![Line-by-Line](https://placehold.co/800x450/090d17/34d399?text=Screenshot+2:+Line-by-Line+Analysis)
-*The app breaks down the code so the student understands exactly what each block does.*
-
-### 3. Interactive Code Quiz
-![Quiz Interface](https://placehold.co/800x450/090d17/a855f7?text=Screenshot+3:+Interactive+Quiz)
-*Testing the user's knowledge to ensure they aren't just blindly copy-pasting.*
-
----
 
 ## 🚀 How to Run the Project
 
